@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Monkeytype Olimpiada 2026 | Andijon Typing Championship</title>
 <style>
+/* STYLE QISMI O'ZGARMADI - XUDDI SHU HOLDA QOLDIRING */
 * {
     margin: 0;
     padding: 0;
@@ -1014,7 +1015,7 @@ nav {
                 </div>
                 <div>
                     <div style="font-size: 12px; color: var(--text-muted);">QOLGAN VAQT</div>
-                    <div style="font-size: 32px; font-weight: 900; color: var(--primary);" id="typingTimer">60</div>
+                    <div style="font-size: 32px; font-weight: 900; color: var(--primary);" id="typingTimer">120</div>
                 </div>
             </div>
             
@@ -1188,7 +1189,7 @@ nav {
 
 <script>
 // ============ KONFIGURATSIYA ============
-const API_URL = 'http://localhost:3001/api';
+const API_URL = '/api';
 
 // ============ GLOBAL O'ZGARUVCHILAR ============
 let token = localStorage.getItem('token');
@@ -1201,24 +1202,18 @@ let typedChars = [];
 let errors = 0;
 let keystrokes = 0;
 
-// Challenges
-const CHALLENGES = [
-    { id: 0, name: "Boshlang'ich Typing", time: 60, difficulty: "easy", 
-      text: "The evolution of modern technology has fundamentally altered the way human beings communicate and process information. In the past, writing was a slow and deliberate craft, often requiring physical tools like ink and parchment. Today, we navigate a digital landscape where speed and accuracy are the primary currencies of success. Mastering the keyboard is no longer just a technical skill; it is a vital bridge between human thought and digital execution.
+// YANGI MATN (120 SEKUND) - 1 TA CHALLENGE
+const TYPING_TEXT = "The evolution of modern technology has fundamentally altered the way human beings communicate and process information. In the past, writing was a slow and deliberate craft, often requiring physical tools like ink and parchment. Today, we navigate a digital landscape where speed and accuracy are the primary currencies of success. Mastering the keyboard is no longer just a technical skill; it is a vital bridge between human thought and digital execution. As we look toward the future, the integration of artificial intelligence and automated systems suggests a world where efficiency is paramount. However, the core of innovation still remains within our ability to express complex ideas clearly and rapidly. Whether you are coding a new software application, drafting a legal document, or participating in a high-stakes typing competition, your precision defines your impact. Focus on the rhythm of your keystrokes, maintain your composure, and remember that every character counts toward the final goal of excellence.";
 
-As we look toward the future, the integration of artificial intelligence and automated systems suggests a world where efficiency is paramount. However, the core of innovation still remains within our ability to express complex ideas clearly and rapidly. Whether you are coding a new software application, drafting a legal document, or participating in a high-stakes typing competition, your precision defines your impact. Focus on the rhythm of your keystrokes, maintain your composure, and remember that every character counts toward the final goal of excellence." },
-    { id: 1, name: "Tez Yozuv", time: 60, difficulty: "medium",
-      text: "maktab o'quvchilari bilim oladi ular har kuni qattiq mehnat qiladi va muvaffaqiyatga erishadilar" },
-    { id: 2, name: "Ultra Speed", time: 45, difficulty: "hard",
-      text: "algoritm dastur kod yozish loyiha yaratish muammo echish mantiqiy fikrlash muhim amaliy ko'nikma" },
-    { id: 3, name: "Champion Round", time: 90, difficulty: "pro",
-      text: "olimpiada g'olibi mukofot oladi birinchi o'rin eng yaxshi natija ko'rsatish kerak halol va adolatli raqobat" }
+// Challenges - FAQAT 1 TA (120 sekund)
+const CHALLENGES = [
+    { id: 0, name: "Olimpiada Typing", time: 120, difficulty: "pro", text: TYPING_TEXT }
 ];
 
 // Rules
 const RULES = [
     { title: "Yosh chegarasi", desc: "Faqat 5-sinf o'quvchilari (10–11 yosh) ishtirok eta oladi." },
-    { title: "Musobaqa formati", desc: "Har bir ishtirokchiga 60 soniya beriladi. WPM va aniqlik ko'rsatkichi hisoblanadi." },
+    { title: "Musobaqa formati", desc: "Har bir ishtirokchiga 120 soniya beriladi. WPM va aniqlik ko'rsatkichi hisoblanadi." },
     { title: "Hisoblash tizimi", desc: "Ball = WPM × (Aniqlik% / 100). Bir xil natijada aniqlik muhimroq." },
     { title: "Ruxsat etilmagan", desc: "Autocorrect, spell-check va boshqa yordamchi dasturlar taqiqlanadi." },
     { title: "Hudud", desc: "Musobaqa Andijon shahri 5-sinf o'quvchilari uchun." },
@@ -1226,7 +1221,6 @@ const RULES = [
 ];
 
 // ============ API FUNKSIYALARI ============
-// Frontend index.html ichidagi apiRequest funksiyasini almashtiring
 async function apiRequest(endpoint, options = {}) {
     const headers = {
         'Content-Type': 'application/json',
@@ -1246,7 +1240,6 @@ async function apiRequest(endpoint, options = {}) {
         });
         
         const data = await response.json();
-        console.log(`📡 API javob: ${endpoint}`, response.status, data);
         
         if (!response.ok) {
             throw new Error(data.error || 'Xatolik yuz berdi');
@@ -1269,8 +1262,8 @@ function updateNavAuth() {
     if (currentUser) {
         userSection.style.display = 'flex';
         loginBtn.style.display = 'none';
-        navAvatar.textContent = currentUser.initials || currentUser.name.charAt(0);
-        navName.textContent = currentUser.name.split(' ')[0];
+        navAvatar.textContent = currentUser.initials || (currentUser.name ? currentUser.name.charAt(0) : 'U');
+        navName.textContent = currentUser.name ? currentUser.name.split(' ')[0] : currentUser.username;
     } else {
         userSection.style.display = 'none';
         loginBtn.style.display = 'block';
@@ -1403,7 +1396,7 @@ function renderChallenges() {
     
     grid.innerHTML = CHALLENGES.map(ch => `
         <div class="challenge-item" onclick="startChallenge(${ch.id})">
-            <div class="challenge-icon">${ch.id === 0 ? '⌨️' : ch.id === 1 ? '🚀' : ch.id === 2 ? '🔥' : '👑'}</div>
+            <div class="challenge-icon">👑</div>
             <div class="challenge-title">${ch.name}</div>
             <div class="challenge-desc">${ch.time} soniya · ${ch.text.split(' ').length} ta so'z</div>
             <span class="challenge-difficulty ${difficultyMap[ch.difficulty]}">${difficultyText[ch.difficulty]}</span>
@@ -1603,7 +1596,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ============ LEADERBOARD (JONLI) ============
+// ============ LEADERBOARD ============
 let leaderboardRefreshInterval = null;
 
 async function loadLeaderboard() {
@@ -1657,7 +1650,6 @@ async function loadLeaderboard() {
             document.getElementById('myStatsBox').style.display = 'none';
         }
         
-        // Har 30 sekundda avtomatik yangilanish
         leaderboardRefreshInterval = setInterval(() => {
             loadLeaderboard();
         }, 30000);
@@ -1829,6 +1821,7 @@ function formatTime(dateString) {
 }
 
 function escapeHtml(text) {
+    if (!text) return '';
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
