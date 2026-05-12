@@ -1188,7 +1188,10 @@ nav {
 
 <script>
 // ============ KONFIGURATSIYA ============
-const API_URL = 'http://localhost:3001/api';
+// Dinamik API URL - localhost va Railwayda ishlaydi
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3001/api'
+    : '/api';
 
 // ============ GLOBAL O'ZGARUVCHILAR ============
 let token = localStorage.getItem('token');
