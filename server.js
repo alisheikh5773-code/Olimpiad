@@ -7,6 +7,15 @@ const { initDb } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const path = require('path');
+
+// Static fayllar (frontend) ni xizmat qilish
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+// Barcha boshqa so'rovlar index.html ga yo'naltiriladi
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
 
 // CORS sozlamalari - hamma joydan ishlashi uchun
 app.use(cors({
