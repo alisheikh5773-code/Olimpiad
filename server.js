@@ -2,24 +2,15 @@
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
-const path = require('path');
+const path = require('path');  // <-- FAQAT 1 MARTA
 const { initDb } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const path = require('path');
-
-// Static fayllar (frontend) ni xizmat qilish
-app.use(express.static(path.join(__dirname, '../frontend')));
-
-// Barcha boshqa so'rovlar index.html ga yo'naltiriladi
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
-});
 
 // CORS sozlamalari - hamma joydan ishlashi uchun
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:3001', 'http://127.0.0.1:3001'],
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:3001', 'http://127.0.0.1:3001', process.env.FRONTEND_URL],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
@@ -54,10 +45,10 @@ app.get('/api/health', (req, res) => res.json({
     message: 'Server ishlayapti'
 }));
 
-// Frontend fayllarni serve qilish
+// Static fayllar (frontend) ni xizmat qilish
 app.use(express.static(path.join(__dirname, '../frontend')));
 
-// Barcha boshqa route'lar uchun index.html
+// Barcha boshqa so'rovlar index.html ga yo'naltiriladi (FAQAT 1 MARTA)
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
