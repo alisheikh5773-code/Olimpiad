@@ -1,16 +1,15 @@
-// backend/server.js
 const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
-const path = require('path');  // <-- FAQAT 1 MARTA
+const path = require('path');
 const { initDb } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// CORS sozlamalari - hamma joydan ishlashi uchun
+// CORS sozlamalari
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:3001', 'http://127.0.0.1:3001', process.env.FRONTEND_URL],
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:3001', 'http://127.0.0.1:3001'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
@@ -18,7 +17,7 @@ app.use(cors({
 
 app.use(express.json({ limit: '1mb' }));
 
-// Rate limiting (15 daqiqada 200 so'rov)
+// Rate limiting
 const apiLimiter = rateLimit({ 
     windowMs: 15 * 60 * 1000, 
     max: 200, 
@@ -45,12 +44,12 @@ app.get('/api/health', (req, res) => res.json({
     message: 'Server ishlayapti'
 }));
 
-// Static fayllar (frontend) ni xizmat qilish
-app.use(express.static(path.join(__dirname, '../frontend')));
+// STATIC FAYLLAR - PUBLIC PAPKASIDAN (O'ZGARTIRILDI!)
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Barcha boshqa so'rovlar index.html ga yo'naltiriladi (FAQAT 1 MARTA)
+// CATCH-ALL - INDEX.HTML GA YONALTIRISH (O'ZGARTIRILDI!)
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Error handling middleware
